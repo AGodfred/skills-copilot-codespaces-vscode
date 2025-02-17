@@ -19,4 +19,16 @@ app.post('/comments', (req, res) => {
     res.json(newComment);
 });
 
-app.put
+app.put('/comments/:id', (req, res) => {
+    const { id } = req.params;
+    const updatedComment = req.body;
+    const index = comments.findIndex(comment => comment.id === id);
+    
+    if (index !== -1) {
+        comments[index] = updatedComment;
+        fs.writeFileSync('./comments.json', JSON.stringify(comments));
+        res.json(updatedComment);
+    } else {
+        res.status(404).json({ message: "Comment not found" });
+    }
+});
