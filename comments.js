@@ -1,14 +1,22 @@
-const http = require('http');
+// Create a web server
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const PORT = 3000;
+const comments = require('./comments.json');
 const fs = require('fs');
 
-http.createServer((req, res) => {
-  if (req.url === '/comments') {
-    fs.readFile('./comments.json', 'utf8', (err, data) => {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(data);
-    });
-  } else {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Not Found');
-  }
-}).listen(3000, () => console.log('running on http://localhost:3000'));
+app.use(bodyParser.json());
+
+app.get('/comments', (req, res) => {
+    res.json(comments);
+});
+
+app.post('/comments', (req, res) => {
+    const newComment = req.body;
+    comments.push(newComment);
+    fs.writeFileSync('./comments.json', JSON.stringify(comments));
+    res.json(newComment);
+});
+
+app.put
